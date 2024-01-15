@@ -13,3 +13,9 @@ The contents of this directory are as follows:
 * `rwroute_container.def` -- an example Apptainer definition file for `rwroute`
 * `nxroute-poc_container.def` -- an example Apptainer definition file for `nxroute-poc` (this is actually a link to `rwroute_container.def` since both routers require an identical environment)
 * `opencl_example/opencl_example_container.def` -- an example Apptainer definition file for a C++/OpenCL "Hello World" application
+
+
+
+
+apptainer build opencl_test.sif opencl_test.def
+apptainer run --rocm --bind /etc/OpenCL opencl-test.sif
