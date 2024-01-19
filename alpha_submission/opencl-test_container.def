@@ -21,7 +21,7 @@ From: ubuntu:22.04
 	git submodule update
 	../cmake-3.28.1-linux-x86_64/bin/cmake -S . -B build
 	cd build
-	../../cmake-3.28.1-linux-x86_64/bin/cmake --build . --config RelWithDebInfo -t opencl-test
+	../../cmake-3.28.1-linux-x86_64/bin/cmake --build . --config RelWithDebInfo -t opencl-test -j
 
 %runscript
 	cd /fpga-solver/build/

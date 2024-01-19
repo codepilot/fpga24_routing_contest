@@ -17,5 +17,5 @@ The contents of this directory are as follows:
 
 
 
-`apptainer build opencl_test.sif opencl_test.def`  
+`apptainer build opencl-test.sif opencl-test_container.def`  
 `apptainer run --rocm --bind /etc/OpenCL opencl-test.sif`
