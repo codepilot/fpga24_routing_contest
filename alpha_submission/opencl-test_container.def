@@ -3,7 +3,7 @@ From: ubuntu:22.04
 
 %post
 	apt-get -y update
-	apt-get -y install software-properties-common
+	apt-get -y install software-properties-common clinfo
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	apt -y update
 	apt-get -y update
