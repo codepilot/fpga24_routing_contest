@@ -14,7 +14,7 @@ From: ubuntu:22.04
 	update-alternatives --set gcc /usr/bin/gcc-13
 	gcc -v
 	wget https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1-linux-x86_64.tar.gz
-	tar -xvzf cmake-3.28.1-linux-x86_64.tar.gz
+	tar -xzf cmake-3.28.1-linux-x86_64.tar.gz
 	git clone https://github.com/codepilot/fpga-solver.git
 	cd /fpga-solver
 	git submodule init
