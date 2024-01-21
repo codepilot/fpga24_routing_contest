@@ -25,4 +25,5 @@ From: ubuntu:22.04
 
 %runscript
 	cd /fpga-solver/build/
+        export OCL_ICD_ENABLE_TRACE=true
 	./opencl-test
