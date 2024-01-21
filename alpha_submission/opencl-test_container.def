@@ -1,7 +1,11 @@
 BootStrap: docker
 From: ubuntu:22.04
 
+%setup
+  mkdir $APPTAINER_ROOTFS/devarea
+
 %post
+	cd $APPTAINER_ROOTFS/devarea
 	apt-get -y update
 	apt-get -y install software-properties-common clinfo
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -16,7 +20,7 @@ From: ubuntu:22.04
 	wget https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1-linux-x86_64.tar.gz
 	tar -xzf cmake-3.28.1-linux-x86_64.tar.gz
 	git clone https://github.com/codepilot/fpga-solver.git
-	cd /fpga-solver
+	cd $APPTAINER_ROOTFS/devarea/fpga-solver
 	git submodule init
 	git submodule update
 	../cmake-3.28.1-linux-x86_64/bin/cmake -S . -B build
@@ -24,7 +28,7 @@ From: ubuntu:22.04
 	../../cmake-3.28.1-linux-x86_64/bin/cmake --build . --config RelWithDebInfo -j
 
 %runscript
-	cd /fpga-solver/build/
+	cd $APPTAINER_ROOTFS/devarea/fpga-solver/build/
         export OCL_ICD_ENABLE_TRACE=true
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/amdgpu-pro/lib64:/opt/amdgpu-pro/lib:/opt/amdgpu/lib64:/opt/amdgpu/lib
 	./opencl-test
