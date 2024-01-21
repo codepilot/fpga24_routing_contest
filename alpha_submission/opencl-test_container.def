@@ -26,5 +26,5 @@ From: ubuntu:22.04
 %runscript
 	cd /fpga-solver/build/
         export OCL_ICD_ENABLE_TRACE=true
-        export LD_LIBRARY_PATH=/opt/amdgpu-pro/lib64;/opt/amdgpu-pro/lib;/opt/amdgpu/lib64;/opt/amdgpu/lib
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/amdgpu-pro/lib64:/opt/amdgpu-pro/lib:/opt/amdgpu/lib64:/opt/amdgpu/lib
 	./opencl-test
