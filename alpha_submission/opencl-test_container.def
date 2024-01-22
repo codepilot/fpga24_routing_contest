@@ -19,6 +19,7 @@ From: ubuntu:22.04
 	gcc -v
 	wget https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1-linux-x86_64.tar.gz
 	tar -xzf cmake-3.28.1-linux-x86_64.tar.gz
+        rm -r -d fpga-solver
 	git clone https://github.com/codepilot/fpga-solver.git
 	cd $APPTAINER_ROOTFS/devarea/fpga-solver
 	git submodule init
