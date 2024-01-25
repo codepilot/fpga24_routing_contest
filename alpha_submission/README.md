@@ -18,4 +18,5 @@ The contents of this directory are as follows:
 
 
 `apptainer build opencl-test.sif opencl-test_container.def`  
-`apptainer run --rocm --bind /etc/OpenCL opencl-test.sif`
+`apptainer overlay create --size 16384 --sparse opencl-test.sif`  
+`sudo apptainer run --writable --rocm --bind /etc/OpenCL opencl-test.sif`  
