@@ -23,6 +23,6 @@ From: ubuntu:22.04
     cd pocl
     mkdir build
     cd build
-    cmake -DENABLE_ICD=TRUE ..
+    cmake -DENABLE_ICD=TRUE -DCMAKE_INSTALL_PREFIX=/usr ..
     make -j && make install
     clinfo
