@@ -35,7 +35,7 @@ $(if $(HTTPSHOST),-Dhttps.proxyHost=$(HTTPSHOST) -Dhttps.proxyPort=$(HTTPSPORT),
 
 # Choice of router (default to rwroute)
 # (other supported values: nxroute-poc)
-ROUTER ?= rwroute
+ROUTER ?= fpga-solver
 
 # Make /usr/bin/time only print out wall-clock time in seconds
 export TIME=Wall-clock time (sec): %e
