@@ -93,7 +93,7 @@ fpga-interchange-schema/interchange/capnp/java.capnp:
 # $^ (%.netlist and %_rwroute.phys), and display/redirect all output to $@.log (%_rwroute.check.log).
 # The exit code of Gradle determines if 'PASS' or 'FAIL' is written to $@ (%_rwroute.check)
 %_$(ROUTER).check: %.netlist %_$(ROUTER).phys %_unrouted.phys | compile-java
-	if ./gradlew --offline -DjvmArgs="-Xms6g -Xmx6g" -Dmain=com.xilinx.fpga24_routing_contest.CheckPhysNetlist :run --args='$^' $(call log_and_or_display,$@.log); then \
+	if ./gradlew --offline -DjvmArgs="$(JVM_HEAP)" -Dmain=com.xilinx.fpga24_routing_contest.CheckPhysNetlist :run --args='$^' $(call log_and_or_display,$@.log); then \
             echo "PASS" > $@; \
         else \
             echo "FAIL" > $@; \
@@ -119,10 +119,14 @@ score-$(ROUTER): $(foreach b,$(BENCHMARKS),$b_$(ROUTER).wirelength $b_$(ROUTER).
 setup-net_printer setup-wirelength_analyzer: | install-python-deps fpga-interchange-schema/interchange/capnp/java.capnp
 
 clean:
-	rm -f *.{phys,check,wirelength,sif}*
+	rm -f *.{check,wirelength,sif}* *_$(ROUTER).phys*
 
 distclean: clean
-	rm -rf *.device *_unrouted.phys *.netlist*
+	rm -rf *.device *.phys *.netlist*
+	rm -f *.dcp *_load.tcl
+	rm -rf workdir .gradle .local .cache .wget-hsts
+	rm -rf .Xilinx
+	_JAVA_OPTIONS="$(JAVA_PROXY)" ./gradlew clean
 
 
 #### BEGIN ROUTER RECIPES
@@ -149,12 +153,15 @@ distclean: clean
 
 # Required Apptainer args:
 # --pid: ensures all processes apptainer spawns are killed with the container
-# --home: overrides the home directory bound into the container to be the 'fakehome' subdir
-APPTAINER_RUN_ARGS = --pid --home `pwd`/fakehome
+# --containall: isolate the container from the host environment
+# --env: propagate certain env vars despite --containall
+# --workdir: working directory for /tmp, etc. inside container
+# --home: map present working directory as /home inside container
+APPTAINER_RUN_ARGS = --pid --containall --env GITHUB_ACTIONS=$(GITHUB_ACTIONS) --workdir `pwd`/workdir --home `pwd`:/home
 ifneq ($(wildcard /tools),)
-    # Creates a read-only mount of the host system's `/tools` directory to the container's
-    # /tools` directory, which allows the container to access the host Vivado installation
-    APPTAINER_RUN_ARGS += --mount src=/tools/,dst=/tools/,ro
+    # Mount the host system's `/tools` directory to the container's `/tools` directory,
+    # which allows the container to access the host Vivado installation
+    APPTAINER_RUN_ARGS += --bind /tools
 endif
 
 # Default Apptainer args. Contestants may modify as necessary.
@@ -164,25 +171,23 @@ ifneq ($(wildcard /etc/OpenCL),)
     APPTAINER_RUN_ARGS += --bind /etc/OpenCL
 endif
 
-# Build an Apptainer image from a definition file in the alpha_submission directory
-%_container.sif: alpha_submission/%_container.def
+# Build an Apptainer image from a definition file in the final_submission directory
+%_container.sif: final_submission/%_container.def
 	apptainer build $@ $<
 
-fakehome:
-	mkdir fakehome
+.PHONY: workdir
+workdir:
+	# Clear out the per-session workdir subdirectory
+	rm -rf workdir && mkdir workdir
 
 # Use the <ROUTER>_container.sif Apptainer image to run all benchmarks
 .PHONY: run-container
-run-container: $(ROUTER)_container.sif | fakehome
-	# Clear out the fakehome subdirectory
-	rm -rf fakehome/* fakehome/.*
+run-container: $(ROUTER)_container.sif workdir
 	apptainer exec $(APPTAINER_RUN_ARGS) $< make ROUTER="$(ROUTER)" BENCHMARKS="$(BENCHMARKS)" VERBOSE="$(VERBOSE)"
 
 # Use the <ROUTER>_container.sif Apptainer image to run a single small benchmark for testing
-.PHONY: test-container | fakehome
-test-container: $(ROUTER)_container.sif
-	# Clear out the fakehome subdirectory
-	rm -rf fakehome/* fakehome/.*
+.PHONY: test-container
+test-container: $(ROUTER)_container.sif workdir
 	apptainer exec $(APPTAINER_RUN_ARGS) $< make ROUTER="$(ROUTER)" BENCHMARKS="boom_med_pb" VERBOSE="$(VERBOSE)"
 
 SUBMISSION_NAME = $(ROUTER)_submission_$(shell date +%Y%m%d%H%M%S)
@@ -199,11 +204,11 @@ distclean-and-package-submission: distclean
 #### BEGIN EXAMPLE RECIPES
 
 # Build and run an example OpenCL application in an Apptainer container
-opencl_example_container.sif: alpha_submission/opencl_example/opencl_example_container.def
+opencl_example_container.sif: final_submission/opencl_example/opencl_example_container.def
 	apptainer build $@ $<
 
 .PHONY: run-opencl-example
-run-opencl-example: opencl_example_container.sif
+run-opencl-example: opencl_example_container.sif workdir
 	apptainer run $(APPTAINER_RUN_ARGS) $<
 
 #### END EXAMPLE RECIPES
