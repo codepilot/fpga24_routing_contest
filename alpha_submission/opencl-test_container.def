@@ -25,7 +25,7 @@ From: ubuntu:22.04
 	git submodule update
 	../cmake-3.28.1-linux-x86_64/bin/cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 	cd build
-	../../cmake-3.28.1-linux-x86_64/bin/cmake --build . -j
+	../../cmake-3.28.1-linux-x86_64/bin/cmake --build .
 
 %runscript
 	cd $APPTAINER_ROOTFS/devarea/fpga-solver/
