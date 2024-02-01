@@ -48,7 +48,7 @@ From: ubuntu:22.04
 	git submodule update
 	cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 	cd build
-	cmake --build . -j -t route_benchmarks
+	cmake --build . -j -t opencl-node-router
 	cd ..
 	cd ..
 
