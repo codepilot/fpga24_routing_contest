@@ -46,9 +46,10 @@ From: ubuntu:22.04
 	cd fpga-solver
 	git submodule init
 	git submodule update
-	cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
+	cmake -DCMAKE_BUILD_TYPE=Release -S . -B build --graphviz=build/fpga-solver.dot
 	cd build
-	cmake --build . -t opencl-node-router
+    dot -Tpng -o fpga-solver.png fpga-solver.dot
+	cmake --build . -t route_benchmarks -j
 	cd ..
 	cd ..
 
