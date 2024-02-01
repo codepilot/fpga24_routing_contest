@@ -32,7 +32,7 @@ From: ubuntu:22.04
     clinfo
 
     apt-get -y update
-	apt-get -y install software-properties-common clinfo
+	apt-get -y install software-properties-common clinfo graphviz
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test
 	apt -y update
 	apt-get -y update
